@@ -4,6 +4,7 @@
 
 ;; Author: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Keywords: tools, calendar
+;; Version: 0.0.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -60,6 +61,7 @@
            ("Asia/Calcutta"    20 nil)])
     (tabulated-list-init-header))
 
+;;;###autoload
 (defun world-time-list ()
   "Show `display-time-world-list' full day comparison."
   (interactive)
