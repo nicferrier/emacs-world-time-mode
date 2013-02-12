@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(require 'cl)
+
 (defun world-time/table-entrys ()
   "For listing the entries of the world-time day."
   (let ((zones-alist display-time-world-list)
