@@ -41,3 +41,10 @@ Each column is the days times in one of the timezones listed in:
 {{{
 display-time-world-list
 }}}
+
+== Enhancements ==
+
+It's pretty cool as is. Here are some possibles though:
+
+* a keypress to go to the customize for the world time alist
+* displaying the time from now but then at every half hour increment
