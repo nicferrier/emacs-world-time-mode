@@ -4,7 +4,7 @@
 
 ;; Author: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Keywords: tools, calendar
-;; Version: 0.0.2
+;; Version: 0.0.3
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -71,6 +71,12 @@
     (world-time-table-mode)
     (tabulated-list-print)
     (switch-to-buffer (current-buffer))))
+
+;;;###autoload
+(defun list-world-time ()
+  "Show `display-time-world-list' full day comparison."
+  (interactive)
+  (call-interactively 'world-time-list))
 
 (provide 'world-time-mode)
 
