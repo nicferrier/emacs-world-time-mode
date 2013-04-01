@@ -55,12 +55,10 @@
     world-time-table-mode tabulated-list-mode "World Time"
     "Major mode for seeing your world time list as a day."
     (setq tabulated-list-entries 'world-time/table-entrys)
+    ;; This is wrong! it needs to be derived from display-time-world-list
     (setq tabulated-list-format
-          [("America/Los_Angeles" 20 nil)
-           ("America/New_York" 20 nil)
-           ("Europe/London"    20 nil)
-           ("Europe/Berlin"    20 nil)
-           ("Asia/Calcutta"    20 nil)])
+          (loop for time in display-time-world-list
+             vconcat (list (list (car time) 20 nil))))
     (tabulated-list-init-header))
 
 ;;;###autoload
