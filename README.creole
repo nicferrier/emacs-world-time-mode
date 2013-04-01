@@ -1,6 +1,8 @@
 = Display the world clock as a day =
 
-Do:
+Emacs can store your interesting timezones in the
+{{{display-time-world-list}}}. Customize that list to where you're
+interested in and then do:
 
 {{{
 M-x world-time-list [RET]
@@ -36,11 +38,8 @@ America/Los Angeles  America/New York     Europe/London        Europe/Berlin
 16:18 PST            19:18 EST            00:18 GMT            01:18 CET        
 }}}
 
-Each column is the days times in one of the timezones listed in:
-
-{{{
-display-time-world-list
-}}}
+Each column is the days times in one of the timezones listed in your
+{{{display-time-world-list}}}.
 
 == Enhancements ==
 
