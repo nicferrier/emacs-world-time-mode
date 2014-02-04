@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'cl)
+(require 'time)
 
 (defun world-time/table-entrys ()
   "For listing the entries of the world-time day."
