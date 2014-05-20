@@ -27,8 +27,9 @@
 
 (require 'cl)
 
-(defmacro* let-env ((var value) &rest body)
+(defmacro* env-let ((var value) &rest body)
   "Very quick and simple Unix ENV let."
+  ;; Have a copy of this in elnode-js.el -- contribute to emacs env.el?
   (declare
    (debug (sexp &rest form))
    (indent 1))
