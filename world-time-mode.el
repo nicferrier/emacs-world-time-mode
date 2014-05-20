@@ -63,12 +63,13 @@ Based on the next hour after the current time."
          (last-hour (* 3600.00 (floor hours-since-epoch)))
          (next-hour (+ 3600.00 last-hour))
          (ref-time (seconds-to-time next-hour))
-         (ref-list (mapcar
-                    (lambda (i)
-                      (list nil
-                            (world-time/zone-list 
-                             (time-add ref-time (seconds-to-time (* 3600.00 i))))))
-                    (number-sequence 0 23))))
+         (ref-list
+          (mapcar
+           (lambda (i)
+             (list nil
+                   (world-time/zone-list 
+                    (time-add ref-time (seconds-to-time (* 3600.00 i))))))
+           (number-sequence 0 23))))
     (append (list (list nil (world-time/zone-list currently))) ref-list)))
 
 (define-derived-mode
