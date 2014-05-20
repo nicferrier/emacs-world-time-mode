@@ -4,7 +4,7 @@
 
 ;; Author: Nic Ferrier <nferrier@ferrier.me.uk>
 ;; Keywords: tools, calendar
-;; Version: 0.0.3
+;; Version: 0.0.5
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -27,29 +27,49 @@
 
 (require 'cl)
 
+(defmacro* let-env ((var value) &rest body)
+  "Very quick and simple Unix ENV let."
+  (declare
+   (debug (sexp &rest form))
+   (indent 1))
+  (let ((varv (make-symbol "varv"))
+        (valuev (make-symbol "valuev"))
+        (saved-var (make-symbol "saved-var")))
+    `(let* ((,varv ,var)
+            (,saved-var (getenv ,varv))
+            (,valuev ,value))
+       (unwind-protect
+            (progn
+              (setenv ,varv ,valuev)
+              ,@body)
+         (setenv ,varv ,saved-var)))))
+
+(defun world-time/zone-list (this-time)
+  "Return the vector of zoned times for TIME."
+  (apply 'vector
+         (mapcar
+          (lambda (zone)
+            (let-env ("TZ" (car zone))
+              (list (format-time-string "%R %Z" this-time))))
+          display-time-world-list)))
+
 (defun world-time/table-entrys ()
-  "For listing the entries of the world-time day."
-  (let ((zones-alist display-time-world-list)
-        (old-tz (getenv "TZ"))
-        (max-width 0)
-        result)
-    (unwind-protect
-         (setq result
-               (loop for i from 0 to 23
-                  collect
-                    (let ((my-time (time-add
-                                    (current-time)
-                                    (seconds-to-time (* i 3600)))))
+  "Make the entry table for the list.
+
+Based on the next hour after the current time."
+  (let* ((currently (current-time))
+         (time-now (time-to-seconds currently))
+         (hours-since-epoch (/ time-now 3600))
+         (last-hour (* 3600.00 (floor hours-since-epoch)))
+         (next-hour (+ 3600.00 last-hour))
+         (ref-time (seconds-to-time next-hour))
+         (ref-list (mapcar
+                    (lambda (i)
                       (list nil
-                            (loop for zone in zones-alist
-                               vconcat
-                                 (progn
-                                   (setenv "TZ" (car zone))
-                                   (list (format-time-string
-                                    "%R %Z" ; display-time-world-time-format
-                                    my-time))))))))
-      (setenv "TZ" old-tz))
-    result))
+                            (world-time/zone-list 
+                             (time-add ref-time (seconds-to-time (* 3600.00 i))))))
+                    (number-sequence 0 23))))
+    (append (list (list nil (world-time/zone-list currently))) ref-list)))
 
 (define-derived-mode
     world-time-table-mode tabulated-list-mode "World Time"
