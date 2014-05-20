@@ -50,7 +50,7 @@
   (apply 'vector
          (mapcar
           (lambda (zone)
-            (let-env ("TZ" (car zone))
+            (env-let ("TZ" (car zone))
               (list (format-time-string "%R %Z" this-time))))
           display-time-world-list)))
 
