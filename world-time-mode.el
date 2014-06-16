@@ -27,30 +27,13 @@
 
 (require 'cl)
 
-(defmacro* env-let ((var value) &rest body)
-  "Very quick and simple Unix ENV let."
-  ;; Have a copy of this in elnode-js.el -- contribute to emacs env.el?
-  (declare
-   (debug (sexp &rest form))
-   (indent 1))
-  (let ((varv (make-symbol "varv"))
-        (valuev (make-symbol "valuev"))
-        (saved-var (make-symbol "saved-var")))
-    `(let* ((,varv ,var)
-            (,saved-var (getenv ,varv))
-            (,valuev ,value))
-       (unwind-protect
-            (progn
-              (setenv ,varv ,valuev)
-              ,@body)
-         (setenv ,varv ,saved-var)))))
-
 (defun world-time/zone-list (this-time)
   "Return the vector of zoned times for TIME."
   (apply 'vector
          (mapcar
           (lambda (zone)
-            (env-let ("TZ" (car zone))
+            (let ((process-environment (cons (concat "TZ=" (car zone))
+                                             process-environment)))
               (list (format-time-string "%R %Z" this-time))))
           display-time-world-list)))
 
