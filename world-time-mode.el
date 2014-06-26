@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'cl)
+(require 'time)
 
 (defun world-time/zone-list (this-time)
   "Return the vector of zoned times for TIME."
