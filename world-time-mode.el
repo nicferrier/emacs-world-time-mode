@@ -32,10 +32,14 @@
   (apply 'vector
          (mapcar
           (lambda (zone)
-            (let ((process-environment (cons (concat "TZ=" (car zone))
-                                             process-environment)))
-              (list (format-time-string "%R %Z" this-time))))
+            (let ((original (getenv "TZ")))
+              (unwind-protect
+                   (progn
+                     (setenv "TZ" (car zone))
+                     (list (format-time-string "%R %Z" this-time)))
+                (setenv "TZ" original))))
           display-time-world-list)))
+
 
 (defun world-time/table-entrys ()
   "Make the entry table for the list.
