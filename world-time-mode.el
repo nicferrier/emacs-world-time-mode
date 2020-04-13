@@ -48,7 +48,7 @@
         (and (boundp 'zoneinfo-style-world-list)
              (symbol-value 'zoneinfo-style-world-list))))))
 
-(defun world-time/zone-list (time)
+(defun world-time--zone-list (time)
   "Return the vector of zoned times for TIME."
   (apply 'vector
          (mapcar
@@ -62,7 +62,7 @@
           (world-time--world-list))))
 
 
-(defun world-time/table-entrys ()
+(defun world-time--table-entries ()
   "Make the entry table for the list.
 
 Based on the next hour after the current time."
@@ -76,15 +76,15 @@ Based on the next hour after the current time."
           (mapcar
            (lambda (i)
              (list nil
-                   (world-time/zone-list
+                   (world-time--zone-list
                     (time-add ref-time (seconds-to-time (* 3600.00 i))))))
            (number-sequence 0 23))))
-    (append (list (list nil (world-time/zone-list currently))) ref-list)))
+    (append (list (list nil (world-time--zone-list currently))) ref-list)))
 
 (define-derived-mode
     world-time-table-mode tabulated-list-mode "World Time"
     "Major mode for seeing your world time list as a day."
-    (setq tabulated-list-entries 'world-time/table-entrys)
+    (setq tabulated-list-entries 'world-time--table-entries)
     ;; This is wrong! it needs to be derived from (world-time--world-list)
     (setq tabulated-list-format
           (cl-loop for time in (world-time--world-list)
