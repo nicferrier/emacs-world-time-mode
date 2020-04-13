@@ -28,7 +28,7 @@
 (require 'cl)
 (require 'time)
 
-(defun world-time/zone-list (this-time)
+(defun world-time/zone-list (time)
   "Return the vector of zoned times for TIME."
   (apply 'vector
          (mapcar
@@ -37,7 +37,7 @@
               (unwind-protect
                    (progn
                      (setenv "TZ" (car zone))
-                     (list (format-time-string "%R %Z" this-time)))
+                     (list (format-time-string "%R %Z" time)))
                 (setenv "TZ" original))))
           display-time-world-list)))
 
