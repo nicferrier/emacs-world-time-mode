@@ -1,10 +1,15 @@
-;;; world-time-mode.el --- show whole days of world-time diffs
+;;; world-time-mode.el --- Show whole days of world-time diffs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2013  Nic Ferrier
 
 ;; Author: Nic Ferrier <nferrier@ferrier.me.uk>
+;; URL: https://github.com/nicferrier/emacs-world-time-mode
+;; Package-Requires: ((emacs "24.1") (cl-lib "0.5"))
 ;; Keywords: tools, calendar
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Version: 0.0.6
+
+;; This file is not part of GNU Emacs.
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -25,7 +30,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'time)
 
 (defun world-time/zone-list (time)
@@ -56,7 +61,7 @@ Based on the next hour after the current time."
           (mapcar
            (lambda (i)
              (list nil
-                   (world-time/zone-list 
+                   (world-time/zone-list
                     (time-add ref-time (seconds-to-time (* 3600.00 i))))))
            (number-sequence 0 23))))
     (append (list (list nil (world-time/zone-list currently))) ref-list)))
