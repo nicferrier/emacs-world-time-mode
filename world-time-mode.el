@@ -1,10 +1,15 @@
-;;; world-time-mode.el --- show whole days of world-time diffs
+;;; world-time-mode.el --- Show whole days of world-time diffs -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2013  Nic Ferrier
 
 ;; Author: Nic Ferrier <nferrier@ferrier.me.uk>
+;; URL: https://github.com/nicferrier/emacs-world-time-mode
+;; Package-Requires: ((emacs "24.1") (cl-lib "0.5"))
 ;; Keywords: tools, calendar
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Version: 0.0.6
+
+;; This file is not part of GNU Emacs.
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -25,10 +30,25 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'time)
 
-(defun world-time/zone-list (this-time)
+;; Adapted from `time--display-world-list' in GNU Emacs 26 time.el.
+(defun world-time--world-list ()
+  "Return alist of time zones to show in `world-time-list'."
+  (if (listp display-time-world-list)
+      display-time-world-list
+    ;; Determine if zoneinfo style timezones are supported by testing that
+    ;; America/New York and Europe/London return different timezones.
+    (let ((nyt (format-time-string "%z" nil "America/New_York"))
+          (gmt (format-time-string "%z" nil "Europe/London")))
+      (if (string-equal nyt gmt)
+          (and (boundp 'legacy-style-world-list)
+               (symbol-value 'legacy-style-world-list))
+        (and (boundp 'zoneinfo-style-world-list)
+             (symbol-value 'zoneinfo-style-world-list))))))
+
+(defun world-time--zone-list (time)
   "Return the vector of zoned times for TIME."
   (apply 'vector
          (mapcar
@@ -37,12 +57,12 @@
               (unwind-protect
                    (progn
                      (setenv "TZ" (car zone))
-                     (list (format-time-string "%R %Z" this-time)))
+                     (list (format-time-string "%R %Z" time)))
                 (setenv "TZ" original))))
-          display-time-world-list)))
+          (world-time--world-list))))
 
 
-(defun world-time/table-entrys ()
+(defun world-time--table-entries ()
   "Make the entry table for the list.
 
 Based on the next hour after the current time."
@@ -56,24 +76,24 @@ Based on the next hour after the current time."
           (mapcar
            (lambda (i)
              (list nil
-                   (world-time/zone-list 
+                   (world-time--zone-list
                     (time-add ref-time (seconds-to-time (* 3600.00 i))))))
            (number-sequence 0 23))))
-    (append (list (list nil (world-time/zone-list currently))) ref-list)))
+    (append (list (list nil (world-time--zone-list currently))) ref-list)))
 
 (define-derived-mode
     world-time-table-mode tabulated-list-mode "World Time"
     "Major mode for seeing your world time list as a day."
-    (setq tabulated-list-entries 'world-time/table-entrys)
-    ;; This is wrong! it needs to be derived from display-time-world-list
+    (setq tabulated-list-entries 'world-time--table-entries)
+    ;; This is wrong! it needs to be derived from (world-time--world-list)
     (setq tabulated-list-format
-          (loop for time in display-time-world-list
+          (cl-loop for time in (world-time--world-list)
              vconcat (list (list (car time) 20 nil))))
     (tabulated-list-init-header))
 
 ;;;###autoload
 (defun world-time-list ()
-  "Show `display-time-world-list' full day comparison."
+  "Show `world-time--world-list' full day comparison."
   (interactive)
   (with-current-buffer (get-buffer-create "*world-time*")
     (world-time-table-mode)
@@ -82,7 +102,7 @@ Based on the next hour after the current time."
 
 ;;;###autoload
 (defun list-world-time ()
-  "Show `display-time-world-list' full day comparison."
+  "Show `world-time--world-list' full day comparison."
   (interactive)
   (call-interactively 'world-time-list))
 
